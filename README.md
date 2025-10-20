@@ -26,4 +26,4 @@ MVVM + Repository Pattern
 
 ## 参考資料
 - [課題ページ](https://yumemi-ios-junior-engineer-codecheck.app.swift.cloud/)
-- [評価基準](https://qiita.com/lovee/items/d76c68341ec3e7beb611)
+- [評価基準](https://qiita.com/lovee/items/d76c68341ec3e7beb611)# yumemi-ios-fortune-app
