@@ -41,7 +41,6 @@ enum APIError: Error {
     
     // MARK: - Debug Description
     
-    /// デバッグ用の詳細メッセージ
     var debugDescription: String {
         switch self {
         case .invalidURL:
@@ -59,5 +58,14 @@ enum APIError: Error {
         case .unknown:
             return "Unknown error"
         }
+    }
+}
+
+// MARK: - LocalizedError
+
+extension APIError: LocalizedError {
+    /// ユーザー向けのエラー説明（localizedDescriptionで取得可能）
+    var errorDescription: String? {
+        message
     }
 }

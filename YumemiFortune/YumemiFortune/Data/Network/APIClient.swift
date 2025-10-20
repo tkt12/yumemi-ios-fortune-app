@@ -25,18 +25,12 @@ final class APIClient {
     
     // MARK: - Initialization
     
-    /// 初期化
-    /// - Parameter session: URLSession（テスト時にモックを注入可能）
     init(session: URLSession = .shared) {
         self.session = session
     }
     
     // MARK: - Public Methods
     
-    /// 占いAPIを呼び出す
-    /// - Parameter request: 占いリクエスト
-    /// - Returns: 都道府県情報
-    /// - Throws: APIError
     func fetchFortune(request: FortuneRequest) async throws -> Prefecture {
         // 1. URLを構築
         guard let url = buildURL() else {
@@ -50,6 +44,7 @@ final class APIClient {
         
         // 3. ヘッダーを設定
         urlRequest.setValue("application/json", forHTTPHeaderField: "Content-Type")
+        urlRequest.setValue("application/json", forHTTPHeaderField: "Accept")
         urlRequest.setValue(Constants.apiVersion, forHTTPHeaderField: "API-Version")
         
         // 4. リクエストボディをエンコード
@@ -78,10 +73,18 @@ final class APIClient {
     
     // MARK: - Private Methods
     
-    /// URLを構築
+    /// URLを構築（安全なパス結合）
     private func buildURL() -> URL? {
-        let urlString = Constants.baseURL + Constants.endpoint
-        return URL(string: urlString)
+        guard let baseURL = URL(string: Constants.baseURL) else {
+            return nil
+        }
+        
+        // スラッシュを除去してから安全に結合
+        let endpoint = Constants.endpoint.trimmingCharacters(
+            in: CharacterSet(charactersIn: "/")
+        )
+        
+        return baseURL.appendingPathComponent(endpoint)
     }
     
     /// リクエストを実行
@@ -99,7 +102,6 @@ final class APIClient {
             throw APIError.invalidResponse
         }
         
-        // ステータスコードが200番台以外ならエラー
         guard (200...299).contains(httpResponse.statusCode) else {
             throw APIError.httpError(statusCode: httpResponse.statusCode)
         }
