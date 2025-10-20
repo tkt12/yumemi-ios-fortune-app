@@ -8,7 +8,7 @@
 import Foundation
 
 /// 都道府県情報のレスポンスモデル
-struct Prefecture: Codable, Equatable {
+struct Prefecture: Codable, Equatable, Sendable {
     let name: String
     let capital: String
     let citizenDay: MonthDay?  // 県民の日がない県もあるからOptional

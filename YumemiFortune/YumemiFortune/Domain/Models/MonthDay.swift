@@ -9,7 +9,7 @@ import Foundation
 
 /// 月日を表す構造体
 /// 都道府県の「県民の日」などで使用
-struct MonthDay: Codable, Equatable {
+struct MonthDay: Codable, Equatable, Sendable {
     let month: Int
     let day: Int
     

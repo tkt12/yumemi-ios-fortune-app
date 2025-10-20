@@ -8,7 +8,7 @@
 import Foundation
 
 /// 占いAPIへのリクエストモデル
-struct FortuneRequest: Codable {
+struct FortuneRequest: Codable, Equatable, Sendable {
     let name: String
     let birthday: YearMonthDay
     let bloodType: String
