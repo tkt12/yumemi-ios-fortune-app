@@ -39,8 +39,8 @@ struct YearMonthDay: Codable, Equatable {
         // （例: 2月30日を指定すると3月2日になってしまうのを防ぐ）
         let resultComponents = Calendar.current.dateComponents([.year, .month, .day], from: date)
         return resultComponents.year == year &&
-        resultComponents.month == month &&
-        resultComponents.day == day
+            resultComponents.month == month &&
+            resultComponents.day == day
     }
     
     // MARK: - Initialization
