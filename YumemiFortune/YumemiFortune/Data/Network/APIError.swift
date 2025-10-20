@@ -8,7 +8,7 @@
 import Foundation
 
 /// API通信で発生するエラー
-enum APIError: Error {
+enum APIError: Error, CustomDebugStringConvertible {
     case invalidURL
     case networkError(Error)
     case invalidResponse
@@ -29,7 +29,14 @@ enum APIError: Error {
         case .invalidResponse:
             return "サーバーからの応答が無効です"
         case .httpError(let statusCode):
-            return "サーバーエラーが発生しました（ステータスコード: \(statusCode)）"
+            // ステータスコードの範囲で適切なメッセージを返す
+            if (400...499).contains(statusCode) {
+                return "クライアントエラーが発生しました（ステータスコード: \(statusCode)）"
+            } else if (500...599).contains(statusCode) {
+                return "サーバーエラーが発生しました（ステータスコード: \(statusCode)）"
+            } else {
+                return "エラーが発生しました（ステータスコード: \(statusCode)）"
+            }
         case .decodingError:
             return "データの解析に失敗しました"
         case .encodingError:
@@ -41,6 +48,7 @@ enum APIError: Error {
     
     // MARK: - Debug Description
     
+    /// デバッグ用の詳細メッセージ
     var debugDescription: String {
         switch self {
         case .invalidURL:

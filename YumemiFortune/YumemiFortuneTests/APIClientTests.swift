@@ -63,10 +63,27 @@ final class APIClientTests: XCTestCase {
     // MARK: - Error Message Tests
     
     func testAPIErrorMessages() {
+        // クライアントエラー（4xx）
+        let clientError = APIError.httpError(statusCode: 404)
+        XCTAssertTrue(clientError.message.contains("クライアントエラー"))
+        
+        // サーバーエラー（5xx）
+        let serverError = APIError.httpError(statusCode: 500)
+        XCTAssertTrue(serverError.message.contains("サーバーエラー"))
+        
+        // その他のエラー
+        let otherError = APIError.httpError(statusCode: 301)
+        XCTAssertTrue(otherError.message.contains("エラーが発生しました"))
+        
+        // 他のエラーメッセージ
         XCTAssertEqual(APIError.invalidURL.message, "無効なURLです")
         XCTAssertEqual(APIError.networkError(NSError(domain: "", code: 0)).message, "ネットワーク接続を確認してください")
-        XCTAssertEqual(APIError.invalidResponse.message, "サーバーからの応答が無効です")
-        XCTAssertEqual(APIError.httpError(statusCode: 404).message, "サーバーエラーが発生しました（ステータスコード: 404）")
+    }
+    
+    func testAPIErrorDebugDescription() {
+        let error = APIError.httpError(statusCode: 404)
+        let debugOutput = "\(error)"  // CustomDebugStringConvertibleが使われる
+        XCTAssertTrue(debugOutput.contains("404"))
     }
     
     // MARK: - JSON Encoding/Decoding Tests

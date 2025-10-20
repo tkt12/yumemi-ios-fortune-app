@@ -25,12 +25,53 @@ final class APIClient {
     
     // MARK: - Initialization
     
+    /// APIクライアントを初期化
+    /// - Parameter session: URLSession（テスト時にモックを注入可能）
     init(session: URLSession = .shared) {
         self.session = session
     }
     
     // MARK: - Public Methods
     
+    /// 占いAPIを呼び出して都道府県情報を取得する
+    ///
+    /// このメソッドはYumemi占いAPIにPOSTリクエストを送信し、
+    /// ユーザーの情報に基づいて相性の良い都道府県を取得します。
+    ///
+    /// - Parameter request: 占いリクエスト（名前、誕生日、血液型、今日の日付を含む）
+    /// - Returns: 都道府県情報（名前、県庁所在地、県民の日、海岸線有無、ロゴURL、概要）
+    ///
+    /// - Throws:
+    ///   - `APIError.invalidURL`: URLの構築に失敗した場合
+    ///   - `APIError.encodingError`: リクエストボディのエンコードに失敗した場合
+    ///   - `APIError.networkError`: ネットワークエラーが発生した場合
+    ///   - `APIError.invalidResponse`: レスポンスが無効な場合
+    ///   - `APIError.httpError`: HTTPステータスコードが200番台以外の場合
+    ///   - `APIError.decodingError`: レスポンスのデコードに失敗した場合
+    ///
+    /// - Note:
+    ///   - HTTPヘッダー:
+    ///     - `Content-Type: application/json`
+    ///     - `Accept: application/json`
+    ///     - `API-Version: v1`
+    ///   - タイムアウト: 30秒
+    ///
+    /// - Example:
+    /// ```swift
+    /// let request = FortuneRequest(
+    ///     name: "山田太郎",
+    ///     birthday: YearMonthDay(year: 2000, month: 1, day: 1),
+    ///     bloodType: "a",
+    ///     today: YearMonthDay.today
+    /// )
+    ///
+    /// do {
+    ///     let prefecture = try await apiClient.fetchFortune(request: request)
+    ///     print(prefecture.name) // "東京都"
+    /// } catch {
+    ///     print(error.localizedDescription)
+    /// }
+    /// ```
     func fetchFortune(request: FortuneRequest) async throws -> Prefecture {
         // 1. URLを構築
         guard let url = buildURL() else {
