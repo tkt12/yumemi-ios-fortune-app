@@ -25,7 +25,7 @@ struct MonthDay: Codable, Equatable, Sendable {
         
         // 実際のカレンダー上で有効な日付かチェック
         var components = DateComponents()
-        components.year = 2000  // うるう年を使用して2月29日を許可
+        components.year = 2000  // 2000年はうるう年（2月29日が存在する）なので選択しています。このバリデーションは意図的に2月29日を有効とみなします（非うるう年には存在しない日付ですが、県民の日などで使用される可能性があるため）。
         components.month = month
         components.day = day
         

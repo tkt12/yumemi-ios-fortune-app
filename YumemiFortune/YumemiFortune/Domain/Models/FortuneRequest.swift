@@ -48,15 +48,6 @@ struct FortuneRequest: Codable, Equatable, Sendable {
     
     /// 誕生日が未来の日付かどうか
     private var isBirthdayInFuture: Bool {
-        if birthday.year > today.year {
-            return true
-        } else if birthday.year == today.year {
-            if birthday.month > today.month {
-                return true
-            } else if birthday.month == today.month {
-                return birthday.day > today.day
-            }
-        }
-        return false
+        return (birthday.year, birthday.month, birthday.day) > (today.year, today.month, today.day)
     }
 }
