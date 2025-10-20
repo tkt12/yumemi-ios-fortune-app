@@ -82,7 +82,7 @@ final class APIClientTests: XCTestCase {
     
     func testAPIErrorDebugDescription() {
         let error = APIError.httpError(statusCode: 404)
-        let debugOutput = "\(error)"  // CustomDebugStringConvertibleが使われる
+        let debugOutput = String(reflecting: error)  // CustomDebugStringConvertibleが使われる
         XCTAssertTrue(debugOutput.contains("404"))
     }
     
