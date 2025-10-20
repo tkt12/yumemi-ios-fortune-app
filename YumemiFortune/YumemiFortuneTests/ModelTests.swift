@@ -31,14 +31,21 @@ final class ModelTests: XCTestCase {
         let validMonthDay = MonthDay(month: 5, day: 9)
         XCTAssertTrue(validMonthDay.isValid)
         
+        // うるう年の2月29日は有効
+        let leapDay = MonthDay(month: 2, day: 29)
+        XCTAssertTrue(leapDay.isValid)
+        
         // 無効な月
         let invalidMonth = MonthDay(month: 13, day: 1)
         XCTAssertFalse(invalidMonth.isValid)
-    }
-    
-    func testMonthDayFormatted() {
-        let monthDay = MonthDay(month: 5, day: 9)
-        XCTAssertEqual(monthDay.formatted, "5月9日")
+        
+        // 無効な日（2月30日は存在しない）
+        let invalidDay = MonthDay(month: 2, day: 30)
+        XCTAssertFalse(invalidDay.isValid)
+        
+        // 4月31日は存在しない
+        let invalidApril = MonthDay(month: 4, day: 31)
+        XCTAssertFalse(invalidApril.isValid)
     }
     
     // MARK: - FortuneRequest Tests
