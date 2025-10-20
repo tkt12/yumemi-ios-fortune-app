@@ -4,9 +4,9 @@
 ゆめみiOSコーディングテストの課題として作成した、ユーザーの情報から相性の良い都道府県を占うiOSアプリです。
 
 ## 環境
-- Xcode: 15.2
-- Swift: 5.9
-- iOS Deployment Target: 17.0
+- Xcode: 16.4
+- Swift: 6.1.2
+- iOS Deployment Target: 18.5
 - 依存ライブラリ: 未定（後で追記）
 
 ## アーキテクチャ
