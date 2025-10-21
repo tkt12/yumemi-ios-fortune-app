@@ -15,6 +15,7 @@ enum APIError: Error, CustomDebugStringConvertible {
     case httpError(statusCode: Int)
     case decodingError(Error)
     case encodingError(Error)
+    case validationError(String)
     case unknown
     
     // MARK: - User Friendly Message
@@ -41,6 +42,8 @@ enum APIError: Error, CustomDebugStringConvertible {
             return "データの解析に失敗しました"
         case .encodingError:
             return "リクエストの作成に失敗しました"
+        case .validationError(let message):
+            return message
         case .unknown:
             return "不明なエラーが発生しました"
         }
@@ -63,6 +66,8 @@ enum APIError: Error, CustomDebugStringConvertible {
             return "Decoding error: \(error.localizedDescription)"
         case .encodingError(let error):
             return "Encoding error: \(error.localizedDescription)"
+        case .validationError(let message):
+            return "Validation error: \(message)"
         case .unknown:
             return "Unknown error"
         }

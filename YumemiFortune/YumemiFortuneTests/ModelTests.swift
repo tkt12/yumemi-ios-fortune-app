@@ -176,6 +176,10 @@ final class ModelTests: XCTestCase {
         let serverError = APIError.httpError(statusCode: 500)
         XCTAssertTrue(serverError.message.contains("サーバーエラー"))
         
+        // validationErrorのテスト
+        let validationError = APIError.validationError("入力内容が不正です")
+        XCTAssertEqual(validationError.message, "入力内容が不正です")
+        
         // その他のエラー
         let otherError = APIError.httpError(statusCode: 301)
         XCTAssertTrue(otherError.message.contains("エラーが発生しました"))
