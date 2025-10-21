@@ -1,6 +1,14 @@
+//
+//  ModelTests.swift
+//  YumemiFortuneTests
+//
+//  Created by tkt on 2025/10/21.
+//
+
 import XCTest
 @testable import YumemiFortune
 
+/// モデル層（YearMonthDay、MonthDay、FortuneRequest、Prefecture）のテスト
 final class ModelTests: XCTestCase {
     
     // MARK: - YearMonthDay Tests
@@ -14,7 +22,7 @@ final class ModelTests: XCTestCase {
         let invalidMonth = YearMonthDay(year: 2000, month: 13, day: 1)
         XCTAssertFalse(invalidMonth.isValid)
         
-        // 無効な日
+        // 無効な日（2月30日は存在しない）
         let invalidDay = YearMonthDay(year: 2000, month: 2, day: 30)
         XCTAssertFalse(invalidDay.isValid)
     }
@@ -46,6 +54,11 @@ final class ModelTests: XCTestCase {
         // 4月31日は存在しない
         let invalidApril = MonthDay(month: 4, day: 31)
         XCTAssertFalse(invalidApril.isValid)
+    }
+    
+    func testMonthDayFormatted() {
+        let monthDay = MonthDay(month: 5, day: 9)
+        XCTAssertEqual(monthDay.formatted, "5月9日")
     }
     
     // MARK: - FortuneRequest Tests
@@ -118,7 +131,7 @@ final class ModelTests: XCTestCase {
                 "day": 9
             },
             "has_coast_line": true,
-            "logo_url": "https://example.com/logo.png",
+            "logo_url": "https://japan-map.com/wp-content/uploads/toyama.png",
             "brief": "富山県の説明"
         }
         """.data(using: .utf8)!
@@ -150,5 +163,33 @@ final class ModelTests: XCTestCase {
         XCTAssertEqual(prefecture.name, "東京都")
         XCTAssertNil(prefecture.citizenDay)
         XCTAssertEqual(prefecture.citizenDayText, "なし")
+    }
+    
+    // MARK: - APIError Tests
+    
+    func testAPIErrorMessages() {
+        // クライアントエラー（4xx）
+        let clientError = APIError.httpError(statusCode: 404)
+        XCTAssertTrue(clientError.message.contains("クライアントエラー"))
+        
+        // サーバーエラー（5xx）
+        let serverError = APIError.httpError(statusCode: 500)
+        XCTAssertTrue(serverError.message.contains("サーバーエラー"))
+        
+        // その他のエラー
+        let otherError = APIError.httpError(statusCode: 301)
+        XCTAssertTrue(otherError.message.contains("エラーが発生しました"))
+        
+        // 他のエラーメッセージ
+        XCTAssertEqual(APIError.invalidURL.message, "無効なURLです")
+        XCTAssertEqual(APIError.networkError(NSError(domain: "", code: 0)).message,
+                       "ネットワーク接続を確認してください")
+    }
+    
+    func testAPIErrorDebugDescription() {
+        let error = APIError.httpError(statusCode: 404)
+        // CustomDebugStringConvertibleが使われる
+        let debugOutput = "\(error)"
+        XCTAssertTrue(debugOutput.contains("404"))
     }
 }
