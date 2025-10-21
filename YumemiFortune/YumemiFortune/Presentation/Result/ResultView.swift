@@ -84,8 +84,9 @@ struct ResultView: View {
                         ProgressView()
                     }
                     .retry(maxCount: 3, interval: .seconds(2))
-                    .onFailure { error in
-                        print("画像読み込みエラー: \(error)")
+                    .onFailure { _ in
+                        // 画像読み込み失敗時はプレースホルダーが表示される
+                        // Kingfisherが自動リトライするため追加処理は不要
                     }
                     .resizable()
                     .scaledToFit()

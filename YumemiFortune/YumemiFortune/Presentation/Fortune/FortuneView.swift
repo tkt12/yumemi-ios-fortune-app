@@ -14,6 +14,7 @@ struct FortuneView: View {
     
     @StateObject private var viewModel = FortuneViewModel.makeDefault()
     @State private var showingResult = false
+    @State private var showingError = false
     
     // MARK: - Body
     
@@ -42,7 +43,7 @@ struct FortuneView: View {
             }
             .navigationTitle("都道府県相性占い")
             .navigationBarTitleDisplayMode(.large)
-            .alert("エラー", isPresented: .constant(viewModel.errorMessage != nil)) {
+            .alert("エラー", isPresented: $showingError) {
                 Button("OK") {
                     viewModel.clearError()
                 }
@@ -60,6 +61,9 @@ struct FortuneView: View {
                 if newValue != nil {
                     showingResult = true
                 }
+            }
+            .onChange(of: viewModel.errorMessage) { _, newValue in
+                showingError = newValue != nil
             }
         }
     }
