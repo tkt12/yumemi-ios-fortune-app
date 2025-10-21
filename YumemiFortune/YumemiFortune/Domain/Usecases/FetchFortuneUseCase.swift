@@ -56,13 +56,7 @@ final class FetchFortuneUseCase {
         
         // バリデーション
         guard request.isValid else {
-            throw APIError.encodingError(
-                NSError(
-                    domain: "FortuneRequest",
-                    code: -1,
-                    userInfo: [NSLocalizedDescriptionKey: "リクエストが無効です"]
-                )
-            )
+            throw APIError.validationError("入力内容が正しくありません")
         }
         
         // リポジトリからデータを取得

@@ -65,24 +65,26 @@ final class RepositoryTests: XCTestCase {
     }
     
     func testFetchFortuneUseCaseInvalidRequest() async {
-        // Given: モックRepository
+        // Given
         let mockRepository = MockFortuneRepository()
         let useCase = FetchFortuneUseCase(repository: mockRepository)
         
-        // When/Then: 無効なリクエストでエラーが投げられる
+        // When/Then: validationErrorが投げられる
         do {
             _ = try await useCase.execute(
-                name: "",  // 空の名前
+                name: "",
                 birthday: YearMonthDay(year: 2000, month: 1, day: 1),
                 bloodType: "a"
             )
             XCTFail("エラーが投げられるべき")
         } catch let error as APIError {
-            guard case .encodingError = error else {
-                XCTFail("encodingErrorが期待される")
+            // validationErrorであることを確認
+            guard case .validationError(let message) = error else {
+                XCTFail("validationErrorが期待される")
                 return
             }
-            // 成功: バリデーションエラーが投げられた
+            // エラーメッセージが適切か確認
+            XCTAssertTrue(message.contains("入力内容"))
         } catch {
             XCTFail("APIErrorが期待される")
         }
