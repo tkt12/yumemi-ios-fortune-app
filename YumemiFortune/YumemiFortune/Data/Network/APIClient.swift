@@ -12,7 +12,7 @@ final class APIClient {
     
     // MARK: - Properties
     
-    private let session: URLSession
+    private let session: URLSessionProtocol
     
     // MARK: - Constants
     
@@ -26,8 +26,8 @@ final class APIClient {
     // MARK: - Initialization
     
     /// APIクライアントを初期化
-    /// - Parameter session: URLSession（テスト時にモックを注入可能）
-    init(session: URLSession = .shared) {
+    /// - Parameter session: URLSessionProtocol（テスト時にモックを注入可能）
+    init(session: URLSessionProtocol = URLSession.shared) {
         self.session = session
     }
     
@@ -133,7 +133,13 @@ final class APIClient {
         do {
             return try await session.data(for: request)
         } catch {
-            throw APIError.networkError(error)
+            if error is CancellationError {
+                // キャンセルはそのまま再送出
+                throw error
+            } else {
+                // それ以外はnetworkErrorにラップ
+                throw APIError.networkError(error)
+            }
         }
     }
     

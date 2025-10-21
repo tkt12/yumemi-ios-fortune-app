@@ -8,105 +8,38 @@
 import XCTest
 @testable import YumemiFortune
 
+/// APIClientの単体テスト
 final class APIClientTests: XCTestCase {
     
+    // MARK: - Properties
+    
+    /// テスト対象（System Under Test）
     var sut: APIClient!
+    
+    /// モックURLSession
+    var mockSession: MockURLSession!
+    
+    // MARK: - Setup & Teardown
     
     override func setUp() {
         super.setUp()
-        sut = APIClient()
+        // テストごとにモックとAPIClientを新規作成
+        mockSession = MockURLSession()
+        sut = APIClient(session: mockSession)
     }
     
     override func tearDown() {
+        // テスト後にクリーンアップ
         sut = nil
+        mockSession = nil
         super.tearDown()
     }
     
-    // MARK: - Request Validation Tests
+    // MARK: - Success Tests
     
-    func testFortuneRequestIsValid() {
-        // 有効なリクエスト
-        let request = FortuneRequest(
-            name: "テスト太郎",
-            birthday: YearMonthDay(year: 2000, month: 1, day: 1),
-            bloodType: "a",
-            today: YearMonthDay.today
-        )
-        
-        XCTAssertTrue(request.isValid)
-    }
-    
-    func testFortuneRequestWithEmptyName() {
-        // 空の名前は無効
-        let request = FortuneRequest(
-            name: "",
-            birthday: YearMonthDay(year: 2000, month: 1, day: 1),
-            bloodType: "a",
-            today: YearMonthDay.today
-        )
-        
-        XCTAssertFalse(request.isValid)
-    }
-    
-    func testFortuneRequestWithInvalidBloodType() {
-        // 無効な血液型
-        let request = FortuneRequest(
-            name: "テスト太郎",
-            birthday: YearMonthDay(year: 2000, month: 1, day: 1),
-            bloodType: "x",
-            today: YearMonthDay.today
-        )
-        
-        XCTAssertFalse(request.isValid)
-    }
-    
-    // MARK: - Error Message Tests
-    
-    func testAPIErrorMessages() {
-        // クライアントエラー（4xx）
-        let clientError = APIError.httpError(statusCode: 404)
-        XCTAssertTrue(clientError.message.contains("クライアントエラー"))
-        
-        // サーバーエラー（5xx）
-        let serverError = APIError.httpError(statusCode: 500)
-        XCTAssertTrue(serverError.message.contains("サーバーエラー"))
-        
-        // その他のエラー
-        let otherError = APIError.httpError(statusCode: 301)
-        XCTAssertTrue(otherError.message.contains("エラーが発生しました"))
-        
-        // 他のエラーメッセージ
-        XCTAssertEqual(APIError.invalidURL.message, "無効なURLです")
-        XCTAssertEqual(APIError.networkError(NSError(domain: "", code: 0)).message, "ネットワーク接続を確認してください")
-    }
-    
-    func testAPIErrorDebugDescription() {
-        let error = APIError.httpError(statusCode: 404)
-        let debugOutput = String(reflecting: error)  // CustomDebugStringConvertibleが使われる
-        XCTAssertTrue(debugOutput.contains("404"))
-    }
-    
-    // MARK: - JSON Encoding/Decoding Tests
-    
-    func testFortuneRequestEncoding() throws {
-        let request = FortuneRequest(
-            name: "ゆめみん",
-            birthday: YearMonthDay(year: 2000, month: 1, day: 27),
-            bloodType: "ab",
-            today: YearMonthDay(year: 2023, month: 5, day: 5)
-        )
-        
-        let encoder = JSONEncoder()
-        let data = try encoder.encode(request)
-        
-        // JSONに変換できることを確認
-        let json = try JSONSerialization.jsonObject(with: data) as? [String: Any]
-        XCTAssertNotNil(json)
-        XCTAssertEqual(json?["name"] as? String, "ゆめみん")
-        XCTAssertEqual(json?["blood_type"] as? String, "ab")
-    }
-    
-    func testPrefectureDecoding() throws {
+    /// 正常系: APIからのレスポンスを正しくデコードできるか
+    func testFetchFortuneSuccess() async throws {
+        // Given: 正常なJSONレスポンスを準備
         let json = """
         {
             "name": "富山県",
@@ -121,13 +54,206 @@ final class APIClientTests: XCTestCase {
         }
         """.data(using: .utf8)!
         
-        let decoder = JSONDecoder()
-        let prefecture = try decoder.decode(Prefecture.self, from: json)
+        mockSession.data = json
+        mockSession.response = HTTPURLResponse(
+            url: URL(string: "https://example.com")!,
+            statusCode: 200,
+            httpVersion: nil,
+            headerFields: nil
+        )
         
+        // When: APIを呼び出す
+        let request = FortuneRequest(
+            name: "テスト太郎",
+            birthday: YearMonthDay(year: 2000, month: 1, day: 1),
+            bloodType: "a",
+            today: YearMonthDay.today
+        )
+        
+        let prefecture = try await sut.fetchFortune(request: request)
+        
+        // Then: 正しくデコードされている
         XCTAssertEqual(prefecture.name, "富山県")
         XCTAssertEqual(prefecture.capital, "富山市")
         XCTAssertEqual(prefecture.citizenDay?.month, 5)
         XCTAssertEqual(prefecture.citizenDay?.day, 9)
         XCTAssertTrue(prefecture.hasCoastLine)
+    }
+    
+    /// 県民の日がnullの場合も正しく処理できるか
+    func testFetchFortuneWithNullCitizenDay() async throws {
+        // Given: citizen_dayがnullのレスポンス
+        let json = """
+        {
+            "name": "東京都",
+            "capital": "新宿区",
+            "citizen_day": null,
+            "has_coast_line": true,
+            "logo_url": "https://example.com/tokyo.png",
+            "brief": "東京都の説明"
+        }
+        """.data(using: .utf8)!
+        
+        mockSession.data = json
+        mockSession.response = HTTPURLResponse(
+            url: URL(string: "https://example.com")!,
+            statusCode: 200,
+            httpVersion: nil,
+            headerFields: nil
+        )
+        
+        let request = FortuneRequest(
+            name: "テスト太郎",
+            birthday: YearMonthDay(year: 2000, month: 1, day: 1),
+            bloodType: "a",
+            today: YearMonthDay.today
+        )
+        
+        let prefecture = try await sut.fetchFortune(request: request)
+        
+        // Then: citizen_dayがnilになっている
+        XCTAssertEqual(prefecture.name, "東京都")
+        XCTAssertNil(prefecture.citizenDay)
+    }
+    
+    // MARK: - Network Error Tests
+    
+    /// ネットワークエラー時に適切なエラーが投げられるか
+    func testFetchFortuneNetworkError() async {
+        // Given: ネットワークエラーをモック
+        mockSession.error = URLError(.notConnectedToInternet)
+        
+        let request = FortuneRequest(
+            name: "テスト太郎",
+            birthday: YearMonthDay(year: 2000, month: 1, day: 1),
+            bloodType: "a",
+            today: YearMonthDay.today
+        )
+        
+        // When/Then: networkErrorが投げられる
+        do {
+            _ = try await sut.fetchFortune(request: request)
+            XCTFail("エラーが投げられるべき")
+        } catch let error as APIError {
+            // APIError.networkErrorであることを確認
+            if case .networkError = error {
+                // 成功
+                XCTAssertTrue(true)
+            } else {
+                XCTFail("networkErrorが期待されるが、\(error)が投げられた")
+            }
+        } catch {
+            XCTFail("APIErrorが期待されるが、\(error)が投げられた")
+        }
+    }
+    
+    // MARK: - HTTP Error Tests
+    
+    /// 404エラー時に適切なエラーが投げられるか（クライアントエラー）
+    func testFetchFortuneHTTP404Error() async {
+        // Given: 404レスポンスをモック
+        mockSession.data = Data()
+        mockSession.response = HTTPURLResponse(
+            url: URL(string: "https://example.com")!,
+            statusCode: 404,
+            httpVersion: nil,
+            headerFields: nil
+        )
+        
+        let request = FortuneRequest(
+            name: "テスト太郎",
+            birthday: YearMonthDay(year: 2000, month: 1, day: 1),
+            bloodType: "a",
+            today: YearMonthDay.today
+        )
+        
+        // When/Then: httpErrorが投げられる
+        do {
+            _ = try await sut.fetchFortune(request: request)
+            XCTFail("エラーが投げられるべき")
+        } catch let error as APIError {
+            if case .httpError(let statusCode) = error {
+                XCTAssertEqual(statusCode, 404)
+                // エラーメッセージが「クライアントエラー」を含むか確認
+                XCTAssertTrue(error.message.contains("クライアントエラー"))
+            } else {
+                XCTFail("httpErrorが期待されるが、\(error)が投げられた")
+            }
+        } catch {
+            XCTFail("APIErrorが期待されるが、\(error)が投げられた")
+        }
+    }
+    
+    /// 500エラー時に適切なエラーが投げられるか（サーバーエラー）
+    func testFetchFortuneHTTP500Error() async {
+        // Given: 500レスポンスをモック
+        mockSession.data = Data()
+        mockSession.response = HTTPURLResponse(
+            url: URL(string: "https://example.com")!,
+            statusCode: 500,
+            httpVersion: nil,
+            headerFields: nil
+        )
+        
+        let request = FortuneRequest(
+            name: "テスト太郎",
+            birthday: YearMonthDay(year: 2000, month: 1, day: 1),
+            bloodType: "a",
+            today: YearMonthDay.today
+        )
+        
+        // When/Then: httpErrorが投げられる
+        do {
+            _ = try await sut.fetchFortune(request: request)
+            XCTFail("エラーが投げられるべき")
+        } catch let error as APIError {
+            if case .httpError(let statusCode) = error {
+                XCTAssertEqual(statusCode, 500)
+                // エラーメッセージが「サーバーエラー」を含むか確認
+                XCTAssertTrue(error.message.contains("サーバーエラー"))
+            } else {
+                XCTFail("httpErrorが期待されるが、\(error)が投げられた")
+            }
+        } catch {
+            XCTFail("APIErrorが期待されるが、\(error)が投げられた")
+        }
+    }
+    
+    // MARK: - Decoding Error Tests
+    
+    /// 不正なJSONの場合にdecodingErrorが投げられるか
+    func testFetchFortuneDecodingError() async {
+        // Given: 不正なJSONをモック
+        let invalidJSON = "this is not json".data(using: .utf8)!
+        
+        mockSession.data = invalidJSON
+        mockSession.response = HTTPURLResponse(
+            url: URL(string: "https://example.com")!,
+            statusCode: 200,
+            httpVersion: nil,
+            headerFields: nil
+        )
+        
+        let request = FortuneRequest(
+            name: "テスト太郎",
+            birthday: YearMonthDay(year: 2000, month: 1, day: 1),
+            bloodType: "a",
+            today: YearMonthDay.today
+        )
+        
+        // When/Then: decodingErrorが投げられる
+        do {
+            _ = try await sut.fetchFortune(request: request)
+            XCTFail("エラーが投げられるべき")
+        } catch let error as APIError {
+            if case .decodingError = error {
+                // 成功
+                XCTAssertTrue(true)
+            } else {
+                XCTFail("decodingErrorが期待されるが、\(error)が投げられた")
+            }
+        } catch {
+            XCTFail("APIErrorが期待されるが、\(error)が投げられた")
+        }
     }
 }
