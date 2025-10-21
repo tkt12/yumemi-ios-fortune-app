@@ -6,6 +6,10 @@
 	objectVersion = 77;
 	objects = {
 
+/* Begin PBXBuildFile section */
+		1EC60C582EA772AE003164C3 /* Kingfisher in Frameworks */ = {isa = PBXBuildFile; productRef = 1EC60C572EA772AE003164C3 /* Kingfisher */; };
+/* End PBXBuildFile section */
+
 /* Begin PBXContainerItemProxy section */
 		1EC60BD52EA63E1A003164C3 /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
@@ -39,6 +43,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				1EC60C582EA772AE003164C3 /* Kingfisher in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -90,6 +95,7 @@
 			);
 			name = YumemiFortune;
 			packageProductDependencies = (
+				1EC60C572EA772AE003164C3 /* Kingfisher */,
 			);
 			productName = YumemiFortune;
 			productReference = 1E2535E02EA6241F00E03B5D /* YumemiFortune.app */;
@@ -148,6 +154,7 @@
 			mainGroup = 1E2535D72EA6241F00E03B5D;
 			minimizedProjectReferenceProxies = 1;
 			packageReferences = (
+				1EC60C562EA772AE003164C3 /* XCRemoteSwiftPackageReference "Kingfisher" */,
 			);
 			preferredProjectObjectVersion = 77;
 			productRefGroup = 1E2535E12EA6241F00E03B5D /* Products */;
@@ -456,6 +463,25 @@
 			defaultConfigurationName = Release;
 		};
 /* End XCConfigurationList section */
+
+/* Begin XCRemoteSwiftPackageReference section */
+		1EC60C562EA772AE003164C3 /* XCRemoteSwiftPackageReference "Kingfisher" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/onevcat/Kingfisher.git";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 8.6.0;
+			};
+		};
+/* End XCRemoteSwiftPackageReference section */
+
+/* Begin XCSwiftPackageProductDependency section */
+		1EC60C572EA772AE003164C3 /* Kingfisher */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 1EC60C562EA772AE003164C3 /* XCRemoteSwiftPackageReference "Kingfisher" */;
+			productName = Kingfisher;
+		};
+/* End XCSwiftPackageProductDependency section */
 	};
 	rootObject = 1E2535D82EA6241F00E03B5D /* Project object */;
 }
