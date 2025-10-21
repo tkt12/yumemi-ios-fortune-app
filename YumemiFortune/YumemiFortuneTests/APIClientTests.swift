@@ -23,13 +23,11 @@ final class APIClientTests: XCTestCase {
     
     override func setUp() {
         super.setUp()
-        // テストごとにモックとAPIClientを新規作成
         mockSession = MockURLSession()
         sut = APIClient(session: mockSession)
     }
     
     override func tearDown() {
-        // テスト後にクリーンアップ
         sut = nil
         mockSession = nil
         super.tearDown()
@@ -136,12 +134,11 @@ final class APIClientTests: XCTestCase {
             XCTFail("エラーが投げられるべき")
         } catch let error as APIError {
             // APIError.networkErrorであることを確認
-            if case .networkError = error {
-                // 成功
-                XCTAssertTrue(true)
-            } else {
+            guard case .networkError = error else {
                 XCTFail("networkErrorが期待されるが、\(error)が投げられた")
+                return
             }
+            // 成功: 期待通りnetworkErrorが投げられた
         } catch {
             XCTFail("APIErrorが期待されるが、\(error)が投げられた")
         }
@@ -172,13 +169,13 @@ final class APIClientTests: XCTestCase {
             _ = try await sut.fetchFortune(request: request)
             XCTFail("エラーが投げられるべき")
         } catch let error as APIError {
-            if case .httpError(let statusCode) = error {
-                XCTAssertEqual(statusCode, 404)
-                // エラーメッセージが「クライアントエラー」を含むか確認
-                XCTAssertTrue(error.message.contains("クライアントエラー"))
-            } else {
+            guard case .httpError(let statusCode) = error else {
                 XCTFail("httpErrorが期待されるが、\(error)が投げられた")
+                return
             }
+            // 成功: 期待通りhttpErrorが投げられた
+            XCTAssertEqual(statusCode, 404)
+            XCTAssertTrue(error.message.contains("クライアントエラー"))
         } catch {
             XCTFail("APIErrorが期待されるが、\(error)が投げられた")
         }
@@ -207,13 +204,13 @@ final class APIClientTests: XCTestCase {
             _ = try await sut.fetchFortune(request: request)
             XCTFail("エラーが投げられるべき")
         } catch let error as APIError {
-            if case .httpError(let statusCode) = error {
-                XCTAssertEqual(statusCode, 500)
-                // エラーメッセージが「サーバーエラー」を含むか確認
-                XCTAssertTrue(error.message.contains("サーバーエラー"))
-            } else {
+            guard case .httpError(let statusCode) = error else {
                 XCTFail("httpErrorが期待されるが、\(error)が投げられた")
+                return
             }
+            // 成功: 期待通りhttpErrorが投げられた
+            XCTAssertEqual(statusCode, 500)
+            XCTAssertTrue(error.message.contains("サーバーエラー"))
         } catch {
             XCTFail("APIErrorが期待されるが、\(error)が投げられた")
         }
@@ -246,12 +243,11 @@ final class APIClientTests: XCTestCase {
             _ = try await sut.fetchFortune(request: request)
             XCTFail("エラーが投げられるべき")
         } catch let error as APIError {
-            if case .decodingError = error {
-                // 成功
-                XCTAssertTrue(true)
-            } else {
+            guard case .decodingError = error else {
                 XCTFail("decodingErrorが期待されるが、\(error)が投げられた")
+                return
             }
+            // 成功: 期待通りdecodingErrorが投げられた
         } catch {
             XCTFail("APIErrorが期待されるが、\(error)が投げられた")
         }
