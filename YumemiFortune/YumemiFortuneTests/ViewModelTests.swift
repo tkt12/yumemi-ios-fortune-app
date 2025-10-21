@@ -13,6 +13,12 @@ import Combine
 @MainActor
 final class ViewModelTests: XCTestCase {
     
+    // MARK: - Constants
+    
+    /// 非同期テストでの待機時間（ナノ秒）
+    /// 100ミリ秒 = 0.1秒
+    private let asyncTestDelay: UInt64 = 100_000_000
+    
     // MARK: - FortuneViewModel Tests
     
     func testFortuneViewModelInitialState() {
@@ -69,7 +75,7 @@ final class ViewModelTests: XCTestCase {
         viewModel.fetchFortune()
         
         // 非同期処理を待つ
-        try? await Task.sleep(nanoseconds: 100_000_000)
+        try? await Task.sleep(nanoseconds: asyncTestDelay)
         
         // Then
         XCTAssertEqual(viewModel.fortune?.name, "富山県")
@@ -91,7 +97,7 @@ final class ViewModelTests: XCTestCase {
         viewModel.fetchFortune()
         
         // 非同期処理を待つ
-        try? await Task.sleep(nanoseconds: 100_000_000)
+        try? await Task.sleep(nanoseconds: asyncTestDelay)
         
         // Then
         XCTAssertNotNil(viewModel.errorMessage)
@@ -111,7 +117,7 @@ final class ViewModelTests: XCTestCase {
         viewModel.fetchFortune()
         
         // 非同期処理を待つ
-        try? await Task.sleep(nanoseconds: 100_000_000)
+        try? await Task.sleep(nanoseconds: asyncTestDelay)
         
         // Then
         XCTAssertNotNil(viewModel.errorMessage)
