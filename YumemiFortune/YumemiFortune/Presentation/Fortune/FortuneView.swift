@@ -155,7 +155,7 @@ struct FortuneView: View {
             .padding()
             .background(
                 viewModel.isSubmitButtonEnabled
-                ? Color.accentColor  // システムのアクセントカラー（自動対応）
+                ? Color.accentColor  // アプリのアクセントカラー（Assetsで設定）
                 : Color(.systemGray3)
             )
             .foregroundStyle(.white)

@@ -90,7 +90,8 @@ struct ResultView: View {
                     }
                     .retry(maxCount: 3, interval: .seconds(2))
                     .onFailure { _ in
-                        // 画像読み込み失敗時はプレースホルダーが表示される
+                        // Kingfisherの自動リトライとプレースホルダー表示により、
+                        // 追加のエラーハンドリングは不要
                     }
                     .resizable()
                     .scaledToFit()
