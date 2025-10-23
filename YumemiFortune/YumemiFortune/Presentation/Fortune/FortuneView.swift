@@ -21,6 +21,10 @@ struct FortuneView: View {
     var body: some View {
         NavigationStack {
             ZStack {
+                // 背景色（ダークモード対応）
+                Color(.systemGroupedBackground)
+                    .ignoresSafeArea()
+                
                 // メインコンテンツ
                 ScrollView {
                     VStack(spacing: 24) {
@@ -92,6 +96,7 @@ struct FortuneView: View {
             VStack(alignment: .leading, spacing: 8) {
                 Text("名前")
                     .font(.headline)
+                    .foregroundStyle(.primary)
                 
                 TextField("山田太郎", text: $viewModel.name)
                     .textFieldStyle(.roundedBorder)
@@ -102,6 +107,7 @@ struct FortuneView: View {
             VStack(alignment: .leading, spacing: 8) {
                 Text("生年月日")
                     .font(.headline)
+                    .foregroundStyle(.primary)
                 
                 DatePicker(
                     "生年月日",
@@ -116,6 +122,7 @@ struct FortuneView: View {
             VStack(alignment: .leading, spacing: 8) {
                 Text("血液型")
                     .font(.headline)
+                    .foregroundStyle(.primary)
                 
                 Picker("血液型", selection: $viewModel.bloodType) {
                     Text("A型").tag("a")
@@ -129,8 +136,8 @@ struct FortuneView: View {
         .padding()
         .background(
             RoundedRectangle(cornerRadius: 12)
-                .fill(Color(.systemBackground))
-                .shadow(color: .black.opacity(0.1), radius: 5, x: 0, y: 2)
+                .fill(Color(.secondarySystemGroupedBackground))  // ダークモード対応
+                .shadow(color: Color.black.opacity(0.1), radius: 5, x: 0, y: 2)
         )
     }
     
@@ -146,11 +153,16 @@ struct FortuneView: View {
             }
             .frame(maxWidth: .infinity)
             .padding()
-            .background(viewModel.isSubmitButtonEnabled ? Color.blue : Color.gray)
+            .background(
+                viewModel.isSubmitButtonEnabled
+                ? Color.accentColor  // システムのアクセントカラー（自動対応）
+                : Color(.systemGray3)
+            )
             .foregroundStyle(.white)
             .cornerRadius(12)
         }
         .disabled(!viewModel.isSubmitButtonEnabled)
+        .animation(.easeInOut(duration: 0.2), value: viewModel.isSubmitButtonEnabled)
     }
     
     /// ローディングオーバーレイ
@@ -171,14 +183,21 @@ struct FortuneView: View {
             .padding(32)
             .background(
                 RoundedRectangle(cornerRadius: 16)
-                    .fill(Color(.systemBackground))
+                    .fill(Color(.systemBackground))  // ダークモード対応
             )
+            .shadow(radius: 20)
         }
     }
 }
 
 // MARK: - Preview
 
-#Preview {
+#Preview("Light Mode") {
     FortuneView()
+        .preferredColorScheme(.light)
+}
+
+#Preview("Dark Mode") {
+    FortuneView()
+        .preferredColorScheme(.dark)
 }

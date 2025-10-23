@@ -25,21 +25,27 @@ struct ResultView: View {
     // MARK: - Body
     
     var body: some View {
-        ScrollView {
-            VStack(spacing: 24) {
-                // ヘッダー
-                headerView
-                
-                // 都道府県情報カード
-                prefectureCard
-                
-                // 詳細情報
-                detailsSection
-                
-                // 概要
-                briefSection
+        ZStack {
+            // 背景色（ダークモード対応）
+            Color(.systemGroupedBackground)
+                .ignoresSafeArea()
+            
+            ScrollView {
+                VStack(spacing: 24) {
+                    // ヘッダー
+                    headerView
+                    
+                    // 都道府県情報カード
+                    prefectureCard
+                    
+                    // 詳細情報
+                    detailsSection
+                    
+                    // 概要
+                    briefSection
+                }
+                .padding()
             }
-            .padding()
         }
         .navigationTitle("占い結果")
         .navigationBarTitleDisplayMode(.inline)
@@ -62,7 +68,6 @@ struct ResultView: View {
             Image(systemName: "star.fill")
                 .font(.system(size: 50))
                 .foregroundStyle(.yellow.gradient)
-            
             Text("あなたと相性が良いのは...")
                 .font(.headline)
                 .foregroundStyle(.secondary)
@@ -86,7 +91,6 @@ struct ResultView: View {
                     .retry(maxCount: 3, interval: .seconds(2))
                     .onFailure { _ in
                         // 画像読み込み失敗時はプレースホルダーが表示される
-                        // Kingfisherが自動リトライするため追加処理は不要
                     }
                     .resizable()
                     .scaledToFit()
@@ -97,8 +101,8 @@ struct ResultView: View {
         .frame(maxWidth: .infinity)
         .background(
             RoundedRectangle(cornerRadius: 16)
-                .fill(Color(.systemBackground))
-                .shadow(color: .black.opacity(0.1), radius: 8, x: 0, y: 4)
+                .fill(Color(.secondarySystemGroupedBackground))  // ダークモード対応
+                .shadow(color: Color.black.opacity(0.1), radius: 8, x: 0, y: 4)
         )
     }
     
@@ -112,8 +116,8 @@ struct ResultView: View {
         .padding()
         .background(
             RoundedRectangle(cornerRadius: 16)
-                .fill(Color(.systemBackground))
-                .shadow(color: .black.opacity(0.1), radius: 8, x: 0, y: 4)
+                .fill(Color(.secondarySystemGroupedBackground))  // ダークモード対応
+                .shadow(color: Color.black.opacity(0.1), radius: 8, x: 0, y: 4)
         )
     }
     
@@ -125,6 +129,7 @@ struct ResultView: View {
                     .foregroundStyle(.blue)
                 Text("概要")
                     .font(.headline)
+                    .foregroundStyle(.primary)
             }
             
             Text(viewModel.brief)
@@ -136,8 +141,8 @@ struct ResultView: View {
         .padding()
         .background(
             RoundedRectangle(cornerRadius: 16)
-                .fill(Color(.systemBackground))
-                .shadow(color: .black.opacity(0.1), radius: 8, x: 0, y: 4)
+                .fill(Color(.secondarySystemGroupedBackground))  // ダークモード対応
+                .shadow(color: Color.black.opacity(0.1), radius: 8, x: 0, y: 4)
         )
     }
 }
@@ -162,13 +167,14 @@ private struct DetailRow: View {
             Text(value)
                 .font(.body)
                 .fontWeight(.medium)
+                .foregroundStyle(.primary)
         }
     }
 }
 
 // MARK: - Preview
 
-#Preview {
+#Preview("Light Mode") {
     NavigationStack {
         ResultView(
             prefecture: Prefecture(
@@ -181,4 +187,21 @@ private struct DetailRow: View {
             )
         )
     }
+    .preferredColorScheme(.light)
+}
+
+#Preview("Dark Mode") {
+    NavigationStack {
+        ResultView(
+            prefecture: Prefecture(
+                name: "富山県",
+                capital: "富山市",
+                citizenDay: MonthDay(month: 5, day: 9),
+                hasCoastLine: true,
+                logoURL: "https://japan-map.com/wp-content/uploads/toyama.png",
+                brief: "富山県（とやまけん）は、日本の中部地方に位置する県。県庁所在地は富山市。\n中部地方の日本海側、新潟県を含めた場合の北陸地方のほぼ中央にある。"
+            )
+        )
+    }
+    .preferredColorScheme(.dark)
 }
