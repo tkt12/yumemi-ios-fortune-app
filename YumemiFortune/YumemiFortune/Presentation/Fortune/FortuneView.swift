@@ -160,15 +160,15 @@ struct FortuneView: View {
             .frame(maxWidth: .infinity)
             .padding()
             .background(
-                viewModel.isSubmitButtonEnabled
-                ? Color.accentColor
-                : Color(.systemGray3)
+                (viewModel.isSubmitButtonEnabled
+                 ? Color.accentColor
+                 : Color(.systemGray3))
+                .animation(.easeInOut(duration: 0.2), value: viewModel.isSubmitButtonEnabled)
             )
             .foregroundStyle(.white)
             .cornerRadius(12)
         }
         .disabled(!viewModel.isSubmitButtonEnabled)
-        .animation(.easeInOut(duration: 0.2), value: viewModel.isSubmitButtonEnabled)
     }
     
     /// ローディングオーバーレイ
@@ -191,7 +191,7 @@ struct FortuneView: View {
                 RoundedRectangle(cornerRadius: 16)
                     .fill(Color("CardBackground"))
             )
-            .shadow(radius: 20)
+            .shadow(color: Color.black.opacity(0.3), radius: 20)
         }
     }
 }
