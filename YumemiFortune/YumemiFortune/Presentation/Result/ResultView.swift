@@ -55,6 +55,7 @@ struct ResultView: View {
                     dismiss()
                 } label: {
                     Text("閉じる")
+                        .foregroundStyle(Color.accentColor)
                 }
             }
         }
@@ -67,7 +68,13 @@ struct ResultView: View {
         VStack(spacing: 12) {
             Image(systemName: "star.fill")
                 .font(.system(size: 50))
-                .foregroundStyle(.yellow.gradient)
+                .foregroundStyle(
+                    LinearGradient(
+                        colors: [Color.accentColor, Color.accentColor.opacity(0.7)],
+                        startPoint: .topLeading,
+                        endPoint: .bottomTrailing
+                    )
+                )
             Text("あなたと相性が良いのは...")
                 .font(.headline)
                 .foregroundStyle(.secondary)
@@ -87,6 +94,7 @@ struct ResultView: View {
                 KFImage(logoURL)
                     .placeholder {
                         ProgressView()
+                            .tint(Color.accentColor)
                     }
                     .retry(maxCount: 3, interval: .seconds(2))
                     .onFailure { _ in
@@ -102,7 +110,7 @@ struct ResultView: View {
         .frame(maxWidth: .infinity)
         .background(
             RoundedRectangle(cornerRadius: 16)
-                .fill(Color(.secondarySystemGroupedBackground))  // ダークモード対応
+                .fill(Color("CardBackground"))
                 .shadow(color: Color.black.opacity(0.1), radius: 8, x: 0, y: 4)
         )
     }
@@ -117,7 +125,7 @@ struct ResultView: View {
         .padding()
         .background(
             RoundedRectangle(cornerRadius: 16)
-                .fill(Color(.secondarySystemGroupedBackground))  // ダークモード対応
+                .fill(Color("CardBackground"))
                 .shadow(color: Color.black.opacity(0.1), radius: 8, x: 0, y: 4)
         )
     }
@@ -127,7 +135,7 @@ struct ResultView: View {
         VStack(alignment: .leading, spacing: 12) {
             HStack {
                 Image(systemName: "doc.text.fill")
-                    .foregroundStyle(.blue)
+                    .foregroundStyle(Color.accentColor)
                 Text("概要")
                     .font(.headline)
                     .foregroundStyle(.primary)
@@ -142,7 +150,7 @@ struct ResultView: View {
         .padding()
         .background(
             RoundedRectangle(cornerRadius: 16)
-                .fill(Color(.secondarySystemGroupedBackground))  // ダークモード対応
+                .fill(Color("CardBackground"))
                 .shadow(color: Color.black.opacity(0.1), radius: 8, x: 0, y: 4)
         )
     }

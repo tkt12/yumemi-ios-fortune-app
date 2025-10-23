@@ -79,7 +79,13 @@ struct FortuneView: View {
         VStack(spacing: 8) {
             Image(systemName: "sparkles")
                 .font(.system(size: 60))
-                .foregroundStyle(.blue.gradient)
+                .foregroundStyle(
+                    LinearGradient(
+                        colors: [Color.accentColor, Color.accentColor.opacity(0.7)],
+                        startPoint: .topLeading,
+                        endPoint: .bottomTrailing
+                    )
+                )
             
             Text("あなたと相性の良い都道府県を占います")
                 .font(.subheadline)
@@ -136,7 +142,7 @@ struct FortuneView: View {
         .padding()
         .background(
             RoundedRectangle(cornerRadius: 12)
-                .fill(Color(.secondarySystemGroupedBackground))  // ダークモード対応
+                .fill(Color("CardBackground"))
                 .shadow(color: Color.black.opacity(0.1), radius: 5, x: 0, y: 2)
         )
     }
@@ -155,7 +161,7 @@ struct FortuneView: View {
             .padding()
             .background(
                 viewModel.isSubmitButtonEnabled
-                ? Color.accentColor  // アプリのアクセントカラー（Assetsで設定）
+                ? Color.accentColor
                 : Color(.systemGray3)
             )
             .foregroundStyle(.white)
@@ -183,7 +189,7 @@ struct FortuneView: View {
             .padding(32)
             .background(
                 RoundedRectangle(cornerRadius: 16)
-                    .fill(Color(.systemBackground))  // ダークモード対応
+                    .fill(Color("CardBackground"))
             )
             .shadow(radius: 20)
         }
