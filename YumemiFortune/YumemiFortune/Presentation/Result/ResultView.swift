@@ -14,6 +14,7 @@ struct ResultView: View {
     // MARK: - Properties
     
     @StateObject private var viewModel: ResultViewModel
+    @ObservedObject private var localizationManager = LocalizationManager.shared
     
     // MARK: - Initialization
     
@@ -46,8 +47,9 @@ struct ResultView: View {
                 .padding()
             }
         }
-        .navigationTitle("占い結果")
+        .navigationTitle("result.title".localized())
         .navigationBarTitleDisplayMode(.inline)
+        .id(localizationManager.currentLanguage)
     }
     
     // MARK: - Subviews
@@ -64,7 +66,8 @@ struct ResultView: View {
                         endPoint: .bottomTrailing
                     )
                 )
-            Text("あなたと相性が良いのは...")
+            
+            Text("result.header.message".localized())
                 .font(.headline)
                 .foregroundStyle(.secondary)
             
@@ -107,9 +110,21 @@ struct ResultView: View {
     /// 詳細情報セクション
     private var detailsSection: some View {
         VStack(spacing: 12) {
-            DetailRow(label: "県庁所在地", value: viewModel.capital, icon: "building.2.fill")
-            DetailRow(label: "県民の日", value: viewModel.citizenDay, icon: "calendar")
-            DetailRow(label: "海岸線", value: viewModel.coastLine, icon: "water.waves")
+            DetailRow(
+                label: "result.detail.capital".localized(),
+                value: viewModel.capital,
+                icon: "building.2.fill"
+            )
+            DetailRow(
+                label: "result.detail.citizenday".localized(),
+                value: viewModel.citizenDay,
+                icon: "calendar"
+            )
+            DetailRow(
+                label: "result.detail.coastline".localized(),
+                value: viewModel.coastLine,
+                icon: "water.waves"
+            )
         }
         .padding()
         .background(
@@ -125,7 +140,7 @@ struct ResultView: View {
             HStack {
                 Image(systemName: "doc.text.fill")
                     .foregroundStyle(Color.accentColor)
-                Text("概要")
+                Text("result.brief.title".localized())
                     .font(.headline)
                     .foregroundStyle(.primary)
             }
