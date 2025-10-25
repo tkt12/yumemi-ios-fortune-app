@@ -19,6 +19,7 @@
 - リアルタイムバリデーション
 - ローディング表示
 - エラーアラート
+- 言語切り替え（日本語/English）
 
 ### 結果画面
 - 都道府県名の表示
@@ -29,6 +30,13 @@
   - 海岸線の有無
 - 都道府県の概要
 - スクロール対応
+
+### その他の機能
+- 多言語対応（日本語/英語）
+  - 実行時の言語切り替え（アプリ再起動不要）
+  - UserDefaultsによる設定の永続化
+- ダークモード対応
+- レスポンシブデザイン（iPhone SE〜Pro Max対応）
 
 ## 🏗️ アーキテクチャ
 
@@ -121,6 +129,17 @@ open YumemiFortune/YumemiFortune.xcodeproj
 4. **ビルド＆実行**
    - Command + R でアプリを起動
 
+## 💭 開発にあたって
+
+本アプリの開発では、**実際の業務を想定したコード品質**を最優先に考えました。
+
+チーム開発を見据え、以下の点を重視して実装しています：
+- **責務の明確な分割**: 各レイヤーの役割を明確にし、変更に強い設計を実現
+- **可読性とメンテナンス性**: 他の開発者が読んでも理解しやすいコード構造
+- **テスタビリティ**: プロトコル指向設計により、各コンポーネントが独立してテスト可能
+
+また、追加機能として**英語対応**を実装しました。都道府県という日本独自の文化要素を扱うこのアプリは、日本に興味を持つ外国の方々にも楽しんでいただけるのではないかと考え、実行時の言語切り替え機能を追加しています。単なる機能追加ではなく、「誰がこのアプリを使うのか」というユーザー視点を持つことの重要性を意識した結果です。
+
 ## 🎨 工夫した点
 
 ### アーキテクチャ設計
@@ -140,10 +159,12 @@ open YumemiFortune/YumemiFortune.xcodeproj
   - Repository層: データ取得ロジックのテスト
   - ViewModel層: 状態管理とビジネスロジックのテスト
   - APIClient層: HTTP通信とエラーハンドリングのテスト
+  - ローカライゼーション層: 言語切り替えと文字列リソースのテスト
 - **エラーハンドリング**を徹底
   - 独自の`APIError`型で詳細なエラー分類
   - ユーザーフレンドリーなエラーメッセージ
   - HTTPステータスコード別のエラーメッセージ（4xx: クライアントエラー、5xx: サーバーエラー）
+  - 全エラーメッセージの多言語対応
 - **型安全性**を重視
   - Codableで型安全なJSON変換
   - Enumで状態を表現
@@ -164,6 +185,10 @@ open YumemiFortune/YumemiFortune.xcodeproj
   - ScrollViewで全情報にアクセス可能
   - iPhone SE〜Pro Maxまで対応
   - ランドスケープモードも考慮
+- **多言語対応**
+  - UI上で簡単に言語切り替え可能
+  - 全UI要素とエラーメッセージを日本語・英語に対応
+  - 設定は端末に永続化され、アプリ再起動後も保持
 
 ### パフォーマンス
 - **async/await**でモダンな非同期処理
@@ -210,6 +235,12 @@ open YumemiFortune/YumemiFortune.xcodeproj
   - ネットワークエラーのハンドリング
   - CancellationErrorの適切な処理
 
+- **ローカライゼーション層**
+  - LocalizationManagerの言語切り替え
+  - UserDefaultsへの永続化
+  - String拡張によるローカライズ文字列の読み込み
+  - フォールバック動作の確認
+
 ### テスト実行
 ```bash
 # Xcodeで Command + U
@@ -229,9 +260,11 @@ YumemiFortune/
 │   ├── Fortune/
 │   │   ├── FortuneView.swift           # 入力画面
 │   │   └── FortuneViewModel.swift      # 入力画面のViewModel
-│   └── Result/
-│       ├── ResultView.swift            # 結果画面
-│       └── ResultViewModel.swift       # 結果画面のViewModel
+│   ├── Result/
+│   │   ├── ResultView.swift            # 結果画面
+│   │   └── ResultViewModel.swift       # 結果画面のViewModel
+│   └── Components/
+│       └── LanguageToggleButton.swift  # 言語切り替えボタン
 ├── Domain/
 │   ├── Models/
 │   │   ├── YearMonthDay.swift          # 年月日型
@@ -247,15 +280,25 @@ YumemiFortune/
 │   │   └── URLSessionProtocol.swift    # URLSessionの抽象化
 │   └── Repositories/
 │       └── FortuneRepository.swift     # データ取得の抽象化
+├── Utilities/
+│   ├── LocalizationManager.swift       # 言語管理
+│   └── String+Localization.swift       # String拡張（ローカライズ）
 └── Resources/
-    └── Assets.xcassets                 # アセット
+    ├── Assets.xcassets                 # アセット
+    └── Localization/
+        ├── ja.lproj/
+        │   └── Localizable.strings     # 日本語リソース
+        └── en.lproj/
+            └── Localizable.strings     # 英語リソース
 
 YumemiFortuneTests/
 ├── MockURLSession.swift                # テスト用モック
 ├── APIClientTests.swift                # APIClientのテスト
 ├── ModelTests.swift                    # モデル層のテスト
 ├── RepositoryTests.swift               # Repository層のテスト
-└── ViewModelTests.swift                # ViewModel層のテスト
+├── ViewModelTests.swift                # ViewModel層のテスト
+├── LocalizationManagerTests.swift      # LocalizationManagerのテスト
+└── StringLocalizationTests.swift       # String+Localizationのテスト
 ```
 
 ## 🌟 今後の拡張案
@@ -265,8 +308,7 @@ YumemiFortuneTests/
 - [ ] 占い履歴の保存（UserDefaults/CoreData）
 - [ ] お気に入り機能
 - [ ] SNSシェア機能
-- [ ] ダークモード対応の強化
-- [ ] ローカライゼーション（多言語対応）
+- [ ] 他言語の追加（中国語、韓国語など）
 - [ ] アニメーション追加
 - [ ] Widgetの実装
 - [ ] オフラインモード
@@ -281,4 +323,35 @@ YumemiFortuneTests/
 
 ## 📝 開発期間
 
-約7日間（2025年10月20日~）
+約7日間（2025年10月20日〜10月26日）
+
+## 🏷️ バージョン履歴
+
+### v1.2.0（提出版）
+- 多言語対応機能の実装
+  - 日本語・英語の切り替え機能
+  - LocalizationManagerによる言語管理
+  - 全UI要素とエラーメッセージのローカライズ
+  - UserDefaultsによる設定の永続化
+- ローカライゼーション関連のテスト追加
+
+### v1.1.1
+- ResultViewのUI改善
+  - 重複していた戻るボタンを削除
+  - ナビゲーション体験の向上
+
+### v1.1.0
+- ダークモード対応を追加
+  - システム設定に応じた自動切り替え
+  - カスタムカラーのダークモード対応
+- アクセントカラーの追加
+  - ブランドカラーの設定
+  - 統一感のあるUI配色の実現
+
+### v1.0.0
+- 基本機能の実装
+  - 占い入力画面（名前、生年月日、血液型）
+  - 結果表示画面（都道府県情報）
+  - MVVM + Repository Pattern + Clean Architecture
+  - ユニットテスト実装
+  - エラーハンドリング
