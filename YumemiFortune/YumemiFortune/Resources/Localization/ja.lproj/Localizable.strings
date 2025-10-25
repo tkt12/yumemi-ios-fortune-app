@@ -47,9 +47,4 @@
 "error.http" = "エラーが発生しました（ステータスコード: %d）";
 "error.decoding" = "データの解析に失敗しました";
 "error.encoding" = "リクエストの作成に失敗しました";
-"error.invalidURL" = "無効なURLです";
-"error.invalidResponse" = "サーバーからの応答が無効です";
-"error.client" = "クライアントエラーが発生しました（ステータスコード: %d）";
-"error.http" = "エラーが発生しました（ステータスコード: %d）";
-"error.decoding" = "データの解析に失敗しました";
-"error.encoding" = "リクエストの作成に失敗しました";
+
