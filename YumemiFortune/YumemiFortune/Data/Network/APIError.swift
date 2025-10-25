@@ -24,28 +24,28 @@ enum APIError: Error, CustomDebugStringConvertible {
     var message: String {
         switch self {
         case .invalidURL:
-            return "無効なURLです"
+            return "error.invalidURL".localized()
         case .networkError:
-            return "ネットワーク接続を確認してください"
+            return "error.network".localized()
         case .invalidResponse:
-            return "サーバーからの応答が無効です"
+            return "error.invalidResponse".localized()
         case .httpError(let statusCode):
             // ステータスコードの範囲で適切なメッセージを返す
             if (400...499).contains(statusCode) {
-                return "クライアントエラーが発生しました（ステータスコード: \(statusCode)）"
+                return String(format: "error.client".localized(), statusCode)
             } else if (500...599).contains(statusCode) {
-                return "サーバーエラーが発生しました（ステータスコード: \(statusCode)）"
+                return "error.server".localized()
             } else {
-                return "エラーが発生しました（ステータスコード: \(statusCode)）"
+                return String(format: "error.http".localized(), statusCode)
             }
         case .decodingError:
-            return "データの解析に失敗しました"
+            return "error.decoding".localized()
         case .encodingError:
-            return "リクエストの作成に失敗しました"
+            return "error.encoding".localized()
         case .validationError(let message):
             return message
         case .unknown:
-            return "不明なエラーが発生しました"
+            return "error.unknown".localized()
         }
     }
     

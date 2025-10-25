@@ -13,6 +13,7 @@ struct FortuneView: View {
     // MARK: - Properties
     
     @StateObject private var viewModel = FortuneViewModel.makeDefault()
+    @ObservedObject private var localizationManager = LocalizationManager.shared
     @State private var showingResult = false
     @State private var showingError = false
     
@@ -45,7 +46,12 @@ struct FortuneView: View {
                     loadingOverlay
                 }
             }
-            .navigationTitle("都道府県相性占い")
+            .navigationTitle("fortune.title".localized())
+            .toolbar {
+                ToolbarItem(placement: .topBarTrailing) {
+                    LanguageToggleButton()
+                }
+            }
             .navigationBarTitleDisplayMode(.large)
             .alert("エラー", isPresented: $showingError) {
                 Button("OK") {
@@ -70,6 +76,7 @@ struct FortuneView: View {
                 showingError = newValue != nil
             }
         }
+        .id(localizationManager.currentLanguage) // 言語変更時に再描画
     }
     
     // MARK: - Subviews
@@ -87,7 +94,7 @@ struct FortuneView: View {
                     )
                 )
             
-            Text("あなたと相性の良い都道府県を占います")
+            Text("fortune.header.message".localized())
                 .font(.subheadline)
                 .foregroundStyle(.secondary)
                 .multilineTextAlignment(.center)
@@ -100,23 +107,23 @@ struct FortuneView: View {
         VStack(spacing: 20) {
             // 名前入力
             VStack(alignment: .leading, spacing: 8) {
-                Text("名前")
+                Text("fortune.input.name.label".localized())
                     .font(.headline)
                     .foregroundStyle(.primary)
                 
-                TextField("山田太郎", text: $viewModel.name)
+                TextField("fortune.input.name.placeholder".localized(), text: $viewModel.name)
                     .textFieldStyle(.roundedBorder)
                     .textContentType(.name)
             }
             
             // 生年月日入力
             VStack(alignment: .leading, spacing: 8) {
-                Text("生年月日")
+                Text("fortune.input.birthday.label".localized())
                     .font(.headline)
                     .foregroundStyle(.primary)
                 
                 DatePicker(
-                    "生年月日",
+                    "fortune.input.birthday.label".localized(),
                     selection: $viewModel.birthday,
                     displayedComponents: .date
                 )
@@ -126,15 +133,15 @@ struct FortuneView: View {
             
             // 血液型選択
             VStack(alignment: .leading, spacing: 8) {
-                Text("血液型")
+                Text("fortune.input.bloodtype.label".localized())
                     .font(.headline)
                     .foregroundStyle(.primary)
                 
-                Picker("血液型", selection: $viewModel.bloodType) {
-                    Text("A型").tag("a")
-                    Text("B型").tag("b")
-                    Text("AB型").tag("ab")
-                    Text("O型").tag("o")
+                Picker("fortune.input.bloodtype.label".localized(), selection: $viewModel.bloodType) {
+                    Text("fortune.input.bloodtype.a".localized()).tag("a")
+                    Text("fortune.input.bloodtype.b".localized()).tag("b")
+                    Text("fortune.input.bloodtype.ab".localized()).tag("ab")
+                    Text("fortune.input.bloodtype.o".localized()).tag("o")
                 }
                 .pickerStyle(.segmented)
             }
@@ -154,7 +161,7 @@ struct FortuneView: View {
         } label: {
             HStack {
                 Image(systemName: "sparkles")
-                Text("占う")
+                Text("fortune.button.submit".localized())
                     .font(.headline)
             }
             .frame(maxWidth: .infinity)
@@ -182,7 +189,7 @@ struct FortuneView: View {
                     .scaleEffect(1.5)
                     .tint(.white)
                 
-                Text("占い中...")
+                Text("fortune.loading.message".localized())
                     .font(.headline)
                     .foregroundStyle(.white)
             }

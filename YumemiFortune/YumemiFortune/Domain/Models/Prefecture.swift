@@ -35,12 +35,14 @@ struct Prefecture: Codable, Equatable, Sendable {
         if let citizenDay = citizenDay {
             return citizenDay.formatted
         } else {
-            return "なし"
+            return "result.detail.citizenday.none".localized()
         }
     }
     
     /// 海岸線の有無の表示用テキスト
     var coastLineText: String {
-        hasCoastLine ? "あり" : "なし"
+        hasCoastLine
+        ? "result.detail.coastline.yes".localized()
+        : "result.detail.coastline.no".localized()
     }
 }
