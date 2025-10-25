@@ -1,0 +1,49 @@
+/* 
+  Localizable.strings
+  YumemiFortune
+
+  Created by tkt on 2025/10/26.
+  
+*/
+
+/* 共通 */
+"common.close" = "閉じる";
+"common.ok" = "OK";
+"common.error" = "エラー";
+
+/* FortuneView */
+"fortune.title" = "都道府県相性占い";
+"fortune.header.message" = "あなたと相性の良い都道府県を占います";
+"fortune.input.name.label" = "名前";
+"fortune.input.name.placeholder" = "山田太郎";
+"fortune.input.birthday.label" = "生年月日";
+"fortune.input.bloodtype.label" = "血液型";
+"fortune.input.bloodtype.a" = "A型";
+"fortune.input.bloodtype.b" = "B型";
+"fortune.input.bloodtype.ab" = "AB型";
+"fortune.input.bloodtype.o" = "O型";
+"fortune.button.submit" = "占う";
+"fortune.loading.message" = "占い中...";
+
+/* ResultView */
+"result.title" = "占い結果";
+"result.header.message" = "あなたと相性が良いのは...";
+"result.detail.capital" = "県庁所在地";
+"result.detail.citizenday" = "県民の日";
+"result.detail.coastline" = "海岸線";
+"result.detail.coastline.yes" = "あり";
+"result.detail.coastline.no" = "なし";
+"result.detail.citizenday.none" = "なし";
+"result.brief.title" = "概要";
+
+/* エラーメッセージ */
+"error.network" = "ネットワーク接続を確認してください";
+"error.server" = "サーバーエラーが発生しました";
+"error.validation" = "入力内容が正しくありません";
+"error.unknown" = "予期しないエラーが発生しました";
+"error.invalidURL" = "無効なURLです";
+"error.invalidResponse" = "サーバーからの応答が無効です";
+"error.client" = "クライアントエラーが発生しました（ステータスコード: %d）";
+"error.http" = "エラーが発生しました（ステータスコード: %d）";
+"error.decoding" = "データの解析に失敗しました";
+"error.encoding" = "リクエストの作成に失敗しました";

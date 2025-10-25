@@ -1,0 +1,49 @@
+/* 
+  Localizable.strings
+  YumemiFortune
+
+  Created by tkt on 2025/10/26.
+  
+*/
+
+/* Common */
+"common.close" = "Close";
+"common.ok" = "OK";
+"common.error" = "Error";
+
+/* FortuneView */
+"fortune.title" = "Prefecture Fortune";
+"fortune.header.message" = "Find your compatible prefecture";
+"fortune.input.name.label" = "Name";
+"fortune.input.name.placeholder" = "Taro Yamada";
+"fortune.input.birthday.label" = "Birthday";
+"fortune.input.bloodtype.label" = "Blood Type";
+"fortune.input.bloodtype.a" = "Type A";
+"fortune.input.bloodtype.b" = "Type B";
+"fortune.input.bloodtype.ab" = "Type AB";
+"fortune.input.bloodtype.o" = "Type O";
+"fortune.button.submit" = "Fortune";
+"fortune.loading.message" = "Calculating...";
+
+/* ResultView */
+"result.title" = "Result";
+"result.header.message" = "Your compatible prefecture is...";
+"result.detail.capital" = "Capital";
+"result.detail.citizenday" = "Citizen's Day";
+"result.detail.coastline" = "Coastline";
+"result.detail.coastline.yes" = "Yes";
+"result.detail.coastline.no" = "No";
+"result.detail.citizenday.none" = "None";
+"result.brief.title" = "Overview";
+
+/* Error Messages */
+"error.network" = "Please check your network connection";
+"error.server" = "Server error occurred";
+"error.validation" = "Invalid input";
+"error.unknown" = "An unexpected error occurred";
+"error.invalidURL" = "Invalid URL";
+"error.invalidResponse" = "Invalid server response";
+"error.client" = "Client error occurred (Status code: %d)";
+"error.http" = "Error occurred (Status code: %d)";
+"error.decoding" = "Failed to parse data";
+"error.encoding" = "Failed to create request";
