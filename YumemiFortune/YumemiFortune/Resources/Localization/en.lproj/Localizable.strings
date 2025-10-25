@@ -47,3 +47,9 @@
 "error.http" = "Error occurred (Status code: %d)";
 "error.decoding" = "Failed to parse data";
 "error.encoding" = "Failed to create request";
+"error.invalidURL" = "Invalid URL";
+"error.invalidResponse" = "Invalid server response";
+"error.client" = "Client error occurred (Status code: %d)";
+"error.http" = "Error occurred (Status code: %d)";
+"error.decoding" = "Failed to parse data";
+"error.encoding" = "Failed to create request";
