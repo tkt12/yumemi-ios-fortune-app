@@ -14,7 +14,6 @@ struct ResultView: View {
     // MARK: - Properties
     
     @StateObject private var viewModel: ResultViewModel
-    @Environment(\.dismiss) private var dismiss
     
     // MARK: - Initialization
     
@@ -49,16 +48,6 @@ struct ResultView: View {
         }
         .navigationTitle("占い結果")
         .navigationBarTitleDisplayMode(.inline)
-        .toolbar {
-            ToolbarItem(placement: .topBarTrailing) {
-                Button {
-                    dismiss()
-                } label: {
-                    Text("閉じる")
-                        .foregroundStyle(Color.accentColor)
-                }
-            }
-        }
     }
     
     // MARK: - Subviews
